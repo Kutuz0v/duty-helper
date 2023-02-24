@@ -1,0 +1,1 @@
+web: java -jar target/duty-helper-1.0.jar -Dserver.port=$PORT
