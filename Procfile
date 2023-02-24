@@ -1,1 +1,1 @@
-web: java -jar target/duty-helper-1.0.jar -Dserver.port=$PORT
+web: java -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 -jar target/duty-helper-1.0.jar -Dserver.port=$PORT
