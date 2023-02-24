@@ -1,6 +1,7 @@
 package scpc.dutyhelper.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -15,9 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import scpc.dutyhelper.config.security.jwt.AuthEntryPointJwt;
 import scpc.dutyhelper.config.security.jwt.AuthTokenFilter;
 import scpc.dutyhelper.auth.service.impl.auth.UserDetailsServiceImpl;
+
+import java.nio.charset.StandardCharsets;
 
 @EnableAsync
 @Configuration
@@ -37,6 +41,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
+    @Bean
+    public FilterRegistrationBean<CharacterEncodingFilter> encodingFilter() {
+        FilterRegistrationBean<CharacterEncodingFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.toString(), true));
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setName("encoding-filter");
+        filterRegistrationBean.setOrder(1);
+        return filterRegistrationBean;
+    }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
