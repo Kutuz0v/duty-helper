@@ -1,7 +1,7 @@
 package scpc.dutyhelper.auth.service;
 
-import scpc.dutyhelper.auth.model.role.Role;
 import scpc.dutyhelper.auth.model.User;
+import scpc.dutyhelper.auth.model.role.Role;
 
 import java.util.List;
 import java.util.Set;

@@ -1,7 +1,5 @@
 package scpc.dutyhelper.auth.model.role;
 
-import scpc.dutyhelper.auth.model.role.ERole;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 

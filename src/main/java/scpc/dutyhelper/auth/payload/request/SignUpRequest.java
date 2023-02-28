@@ -1,6 +1,8 @@
 package scpc.dutyhelper.auth.payload.request;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -18,8 +20,6 @@ public class SignUpRequest {
     @Size(max = 50)
     @Email
     private String email;
-
-//    private Set<String> role;
 
     @NotBlank
     @Size(min = 8, max = 128)

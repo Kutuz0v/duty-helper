@@ -2,7 +2,6 @@ package scpc.dutyhelper.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Length;
 import scpc.dutyhelper.auth.model.role.Role;
 
@@ -17,7 +16,6 @@ import java.util.Set;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 import static javax.persistence.GenerationType.IDENTITY;
-import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @Table(name = "users")
@@ -36,7 +34,7 @@ public class User {
     @NotBlank
     @Size(max = 50)
     @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@scpc.gov.ua$")
-    @Column(unique=true)
+    @Column(unique = true)
     private String email;
 
     @NotBlank
@@ -65,7 +63,7 @@ public class User {
     @ToString.Exclude
     private Boolean enabled = false;
 
-    @ToString.Exclude
+    @JsonProperty(access = WRITE_ONLY)
     private String confirmationCode;
 
     @ManyToMany()

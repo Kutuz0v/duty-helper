@@ -2,22 +2,17 @@ package scpc.dutyhelper.auth.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import scpc.dutyhelper.auth.model.role.ERole;
-import scpc.dutyhelper.auth.model.role.Role;
 import scpc.dutyhelper.auth.model.User;
-import scpc.dutyhelper.auth.service.UserService;
 import scpc.dutyhelper.auth.model.UserDetailsImpl;
+import scpc.dutyhelper.auth.model.role.ERole;
+import scpc.dutyhelper.auth.service.UserService;
 import scpc.dutyhelper.exception.ForbiddenException;
-import scpc.dutyhelper.exception.UnauthorizedException;
 
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -42,9 +37,14 @@ public class UserController {
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        if (!isAdmin()) {
+            user.setRoles(null);
+            user.setEnabled(null);
+        } else {
+            if (!isOwnerOrAdmin(id))
+                throw new ForbiddenException("You don't have permission to update this user");
+        }
         log(user);
-        if (isOwnerOrAdmin(id))
-            throw new ForbiddenException("You don't have permission to update this user");
         return service.update(id, user);
     }
 
@@ -57,13 +57,6 @@ public class UserController {
         else throw new ForbiddenException("You don't have permission to delete this user");
     }
 
-    @PutMapping("/{id}/roles")
-    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
-    public User updateRoles(@PathVariable Long id, @RequestBody Set<Role> roles) {
-        log(get(id));
-        return service.updateRoles(id, roles);
-    }
-
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/{id}")
     public User get(@PathVariable Long id) {
@@ -71,9 +64,18 @@ public class UserController {
     }
 
     private boolean isOwnerOrAdmin(Long id) {
+        return isOwner(id) || isAdmin();
+    }
+
+    private boolean isOwner(Long id) {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getId().equals(id) ||
-                principal.getAuthorities().contains(new SimpleGrantedAuthority(ERole.ADMINISTRATOR.name()));
+        return principal.getId().equals(id);
+    }
+
+    private boolean isAdmin() {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getAuthorities().contains(new SimpleGrantedAuthority(ERole.ADMINISTRATOR.name()));
+
     }
 
     private void log(Object o) {

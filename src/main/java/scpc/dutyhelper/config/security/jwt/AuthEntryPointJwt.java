@@ -11,11 +11,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import scpc.dutyhelper.exception.ApiExceptionHandler;
 import scpc.dutyhelper.exception.UnauthorizedException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 @Slf4j

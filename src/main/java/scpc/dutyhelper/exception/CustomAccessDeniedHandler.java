@@ -3,7 +3,6 @@ package scpc.dutyhelper.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +27,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             HttpServletRequest request,
             HttpServletResponse response,
             AccessDeniedException exc) throws IOException, ServletException {
-
         Authentication auth
                 = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
@@ -37,7 +35,5 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                     + request.getRequestURI());
         }
         resolver.resolveException(request, response, null, new ForbiddenException(exc.getMessage()));
-
-//        response.sendRedirect(request.getContextPath() + "/accessDenied");
     }
 }

@@ -18,7 +18,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("noreply@baeldung.com");
+        message.setFrom("noreply.duty.helper@scpc.gov.ua");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
@@ -40,6 +40,7 @@ public class EmailServiceImpl implements EmailService {
         sendSimpleMessage(to, subject, message);
     }
 
+    @Async
     @Override
     public void sendResetPasswordConfirmation(String email, String baseUrl, String confirmationCode) {
         String subject = "Запит на скидання паролю в сервісі DutyHelper";
@@ -48,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
                 Для скидання паролю перейдіть за посиланням:
                 \r%s
                 \r
-                \rЯкщо ви отримали цей лист випадково, проігноруйте його.""", URL);
+                \rЯкщо ви отримали цей лист випадково, проігноруйте (видаліть) його.""", URL);
 
         sendSimpleMessage(email, subject, message);
     }

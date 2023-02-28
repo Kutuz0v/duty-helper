@@ -2,9 +2,9 @@ package scpc.dutyhelper.faq.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import scpc.dutyhelper.exception.NotFoundException;
 import scpc.dutyhelper.faq.model.Question;
 import scpc.dutyhelper.faq.repository.QuestionRepository;
-import scpc.dutyhelper.exception.NotFoundException;
 
 import java.util.List;
 

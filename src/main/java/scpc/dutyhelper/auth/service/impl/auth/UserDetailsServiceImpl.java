@@ -1,24 +1,20 @@
 package scpc.dutyhelper.auth.service.impl.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import scpc.dutyhelper.auth.model.User;
-import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.auth.model.UserDetailsImpl;
+import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.exception.UnauthorizedException;
 
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-
-//    @Autowired
-    UserRepository userRepository;
-
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
     @Override
     @Transactional

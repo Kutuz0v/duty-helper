@@ -17,9 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import scpc.dutyhelper.auth.service.impl.auth.UserDetailsServiceImpl;
 import scpc.dutyhelper.config.security.jwt.AuthEntryPointJwt;
 import scpc.dutyhelper.config.security.jwt.AuthTokenFilter;
-import scpc.dutyhelper.auth.service.impl.auth.UserDetailsServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 

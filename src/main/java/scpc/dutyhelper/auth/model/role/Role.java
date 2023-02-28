@@ -19,7 +19,7 @@ public class Role {
     @PositiveOrZero
     protected Long id;
 
-//    @Enumerated(EnumType.STRING)
+    //    @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ERole name;
 

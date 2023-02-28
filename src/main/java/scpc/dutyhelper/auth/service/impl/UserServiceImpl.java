@@ -8,14 +8,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import scpc.dutyhelper.auth.model.User;
+import scpc.dutyhelper.auth.model.UserDetailsImpl;
 import scpc.dutyhelper.auth.model.role.ERole;
 import scpc.dutyhelper.auth.model.role.Role;
-import scpc.dutyhelper.auth.model.User;
 import scpc.dutyhelper.auth.repository.RoleRepository;
 import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.auth.service.UserService;
-import scpc.dutyhelper.auth.model.UserDetailsImpl;
-import scpc.dutyhelper.exception.*;
+import scpc.dutyhelper.exception.BadRequestException;
+import scpc.dutyhelper.exception.ConflictException;
+import scpc.dutyhelper.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Set;
@@ -56,7 +58,7 @@ public class UserServiceImpl implements UserService {
                         userRoles == null || userRoles.size() == 0 ?
                                 Set.of(roleRepository.findByName(ERole.USER).get()) :
                                 userRoles
-                        )
+                )
                 .enabled(user.getEnabled() != null && user.getEnabled())
                 .confirmationCode(RandomString.make(64))
                 .build());
@@ -74,6 +76,15 @@ public class UserServiceImpl implements UserService {
 
         if (changes.getLastName() != null && !changes.getLastName().isBlank())
             user.setLastName(changes.getLastName());
+
+        if (changes.getRoles() != null && !changes.getRoles().isEmpty()) {
+            changes.getRoles().add(roleRepository.findByName(ERole.USER).get());
+            user.setRoles(changes.getRoles());
+        }
+
+        if (changes.getEnabled() != null) {
+            user.setEnabled(changes.getEnabled());
+        }
 
         if (changes.getPassword() != null && changes.getNewPassword() != null) {
             boolean authenticated = authenticationManager.authenticate(
@@ -93,6 +104,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateRoles(Long id, Set<Role> roles) {
         User user = get(id);
+        roles.add(roleRepository.findByName(ERole.USER).get());
         user.setRoles(roles);
         log.info("{} updates roles for {} to {}", getCurrentUser(), user, roles);
         return repository.save(user);
