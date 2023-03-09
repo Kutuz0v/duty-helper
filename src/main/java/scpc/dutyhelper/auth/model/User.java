@@ -60,7 +60,8 @@ public class User {
             message = "Last name cannot be more than 50 characters")
     private String lastName;
 
-    @ToString.Exclude
+    private Long telegramChatId = null;
+
     private Boolean enabled = false;
 
     @JsonProperty(access = WRITE_ONLY)

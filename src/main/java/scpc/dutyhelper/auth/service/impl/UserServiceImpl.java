@@ -17,6 +17,7 @@ import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.auth.service.UserService;
 import scpc.dutyhelper.exception.BadRequestException;
 import scpc.dutyhelper.exception.ConflictException;
+import scpc.dutyhelper.exception.InternalError;
 import scpc.dutyhelper.exception.NotFoundException;
 
 import java.util.List;
@@ -48,7 +49,9 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Email already exists");
         });
         Set<Role> userRoles = user.getRoles();
-        return repository.save(User.builder()
+        Role userRole = roleRepository.findByName(ERole.USER).orElseThrow(
+                () -> new InternalError("Role 'USER' not found"));
+        User userForSave = User.builder()
                 .id(0L)
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -56,12 +59,13 @@ public class UserServiceImpl implements UserService {
                 .password(encoder.encode(user.getPassword()))
                 .roles(
                         userRoles == null || userRoles.size() == 0 ?
-                                Set.of(roleRepository.findByName(ERole.USER).get()) :
+                                Set.of(userRole) :
                                 userRoles
                 )
                 .enabled(user.getEnabled() != null && user.getEnabled())
                 .confirmationCode(RandomString.make(64))
-                .build());
+                .build();
+        return repository.save(userForSave);
     }
 
     @Override
@@ -77,8 +81,11 @@ public class UserServiceImpl implements UserService {
         if (changes.getLastName() != null && !changes.getLastName().isBlank())
             user.setLastName(changes.getLastName());
 
+        Role userRole = roleRepository.findByName(ERole.USER).orElseThrow(
+                () -> new InternalError("Role 'USER' not found"));
+
         if (changes.getRoles() != null && !changes.getRoles().isEmpty()) {
-            changes.getRoles().add(roleRepository.findByName(ERole.USER).get());
+            changes.getRoles().add(userRole);
             user.setRoles(changes.getRoles());
         }
 
@@ -102,19 +109,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRoles(Long id, Set<Role> roles) {
-        User user = get(id);
-        roles.add(roleRepository.findByName(ERole.USER).get());
-        user.setRoles(roles);
-        log.info("{} updates roles for {} to {}", getCurrentUser(), user, roles);
-        return repository.save(user);
-    }
-
-    @Override
     public void delete(Long id) {
         User user = get(id);
         log.info("Deletes {} by {}", user, getCurrentUser());
         repository.delete(user);
+    }
+
+    @Override
+    public User connectTelegram(Long chatId, String code) {
+        User user = repository.findByConfirmationCode(code).orElse(null);
+        if (user != null) {
+            user.setTelegramChatId(chatId);
+            user.setConfirmationCode(null);
+            return repository.save(user);
+        } else return null;
+    }
+
+    @Override
+    public List<Long> getAllTelegramUsersIds() {
+        // TODO Є враження що репозиторій може відразу віддавати List<Long> telegramChatIds
+        return repository.findAllByTelegramChatIdIsNotNull()
+                .stream().map(User::getTelegramChatId).toList();
     }
 
     private UserDetailsImpl getCurrentUser() {
