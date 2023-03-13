@@ -7,9 +7,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
 import scpc.dutyhelper.sitemonitoring.model.State;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +34,28 @@ public class Robot {
                     HttpEntity.EMPTY,
                     String.class
             );
+        }
+        // недоступний? ++
+        catch (ResourceAccessException e) {
+            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
+            log.error("1, {}: {}", monitor.getFriendlyName(), message);
+            monitor.setState(State.DOWN);
+        }
+        // відповідь є але з проблемами
+        catch (HttpClientErrorException e) {
+            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
+            log.error("2, {}: {}", monitor.getFriendlyName(), message);
+            if (e.getRawStatusCode() == 403
+                    && Objects.requireNonNull(Objects.requireNonNull(e.getResponseHeaders()).get("Server"))
+                    .get(0).equalsIgnoreCase("cloudflare")
+            ) {
+                monitor.setState(State.UP);
+            } else
+                monitor.setState(State.DOWN);
+
         } catch (Exception e) {
-            log.error("{}: {}", monitor.getFriendlyName(), e.getMessage());
+            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
+            log.warn("3, {}: {}", monitor.getFriendlyName(), message);
             monitor.setState(State.DOWN);
         }
 

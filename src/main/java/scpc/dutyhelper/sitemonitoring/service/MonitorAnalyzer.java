@@ -8,6 +8,7 @@ import scpc.dutyhelper.sitemonitoring.model.State;
 import scpc.dutyhelper.telegram.service.TelegramService;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -46,7 +47,9 @@ public class MonitorAnalyzer {
 
     private void recognizeUp(Monitor monitor) {
         Date now = new Date();
-        String timeDifference = getTimeDifference(monitor.getCheckedAt(), now);
+        String timeDifference = getTimeDifference(
+                Optional.ofNullable(monitor.getCheckedAt()).orElse(now),
+                now);
         monitor.setCheckedAt(now);
         String monitorNameLink = getMonitorNameLink(monitor);
         String message = monitor.getState() == State.DOWN ?

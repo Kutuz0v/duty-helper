@@ -3,7 +3,6 @@ package scpc.dutyhelper.sitemonitoring.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
-import scpc.dutyhelper.sitemonitoring.model.State;
 import scpc.dutyhelper.sitemonitoring.repository.MonitorRepository;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class MonitorServiceImpl implements MonitorService {
     @Override
     public Monitor create(Monitor monitor) {
         monitor.setId(0L);
-        monitor.setState(State.PAUSED);
         return repository.save(monitor);
     }
 
