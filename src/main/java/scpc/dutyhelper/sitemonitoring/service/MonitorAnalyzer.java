@@ -20,7 +20,9 @@ public class MonitorAnalyzer {
 
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
-        if (currentMonitor == null || updatedMonitor.equals(currentMonitor)) return;
+        if (currentMonitor == null ||
+                updatedMonitor.equals(currentMonitor) ||
+                State.PAUSED.equals(currentMonitor.getState())) return;
         switch (updatedMonitor.getState()) {
             case UP -> recognizeUp(currentMonitor);
             case DOWN -> recognizeDown(currentMonitor);
