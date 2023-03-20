@@ -37,25 +37,26 @@ public class Robot {
         }
         // недоступний? ++
         catch (ResourceAccessException e) {
-            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
+            String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
             log.error("1, {}: {}", monitor.getFriendlyName(), message);
             monitor.setState(State.DOWN);
         }
         // відповідь є але з проблемами
         catch (HttpClientErrorException e) {
-            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
-            log.error("2, {}: {}", monitor.getFriendlyName(), message);
             if (e.getRawStatusCode() == 403
                     && Objects.requireNonNull(Objects.requireNonNull(e.getResponseHeaders()).get("Server"))
                     .get(0).equalsIgnoreCase("cloudflare")
             ) {
                 monitor.setState(State.UP);
-            } else
+            } else {
                 monitor.setState(State.DOWN);
+                String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
+                log.error("2, {}: {}", monitor.getFriendlyName(), message);
+            }
 
         } catch (Exception e) {
-            String message = Objects.requireNonNull(e.getMessage()).length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage();
-            log.warn("3, {}: {}", monitor.getFriendlyName(), message);
+            String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
+            log.error("3, {}: {}", monitor.getFriendlyName(), message);
             monitor.setState(State.DOWN);
         }
 

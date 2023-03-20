@@ -8,6 +8,8 @@ import scpc.dutyhelper.sitemonitoring.model.State;
 import scpc.dutyhelper.telegram.service.TelegramService;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class MonitorAnalyzer {
     private final TelegramService telegramService;
     private final MonitorService monitorService;
+
+    /**
+     * <Id, DownTimes>
+     **/
+    private final Map<Long, Integer> falsePositivesMonitors = new HashMap<>();
 
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
@@ -32,6 +39,7 @@ public class MonitorAnalyzer {
     }
 
     private void recognizePaused(Monitor monitor) {
+        falsePositivesMonitors.remove(monitor.getId());
         monitor.setCheckedAt(new Date());
         monitor.setState(State.PAUSED);
         String message = String.format("Monitor %s is PAUSED", getMonitorNameLink(monitor));
@@ -40,14 +48,19 @@ public class MonitorAnalyzer {
     }
 
     private void recognizeDown(Monitor monitor) {
-        monitor.setCheckedAt(new Date());
-        monitor.setState(State.DOWN);
-        String message = String.format("Monitor %s is DOWN", getMonitorNameLink(monitor));
-        telegramService.sendMessageForAll(message);
-        log.warn(message);
+        if (!isFalsePositivesDown(monitor)) {
+            monitor.setCheckedAt(new Date());
+            monitor.setState(State.DOWN);
+            String message = String.format("Monitor %s is DOWN", getMonitorNameLink(monitor));
+            telegramService.sendMessageForAll(message);
+            log.warn(message);
+        } else
+            log.info(
+                    String.format("Monitor %s have %d down times", monitor, falsePositivesMonitors.get(monitor.getId())));
     }
 
     private void recognizeUp(Monitor monitor) {
+        falsePositivesMonitors.remove(monitor.getId());
         Date now = new Date();
         String timeDifference = getTimeDifference(
                 Optional.ofNullable(monitor.getCheckedAt()).orElse(now),
@@ -60,6 +73,13 @@ public class MonitorAnalyzer {
         monitor.setState(State.UP);
         telegramService.sendMessageForAll(message);
         log.warn(message);
+    }
+
+    private boolean isFalsePositivesDown(Monitor monitor) {
+        Integer downTimes = falsePositivesMonitors.getOrDefault(monitor.getId(), 0);
+        downTimes++;
+        falsePositivesMonitors.put(monitor.getId(), downTimes);
+        return downTimes < 3;
     }
 
     private String getMonitorNameLink(Monitor monitor) {

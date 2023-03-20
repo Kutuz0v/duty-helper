@@ -1,5 +1,7 @@
 package scpc.dutyhelper.config;
 
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -34,13 +36,6 @@ import java.util.List;
 @EnableAsync
 public class ConcurrentConfig {
 
-    /*@Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder
-                .interceptors(new HostHeaderInterceptor())
-                .build();
-    }*/
-
     @Bean
     public RestTemplate restTemplate()
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
@@ -53,6 +48,8 @@ public class ConcurrentConfig {
         SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
 
         CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(RequestConfig.custom() // fix "invalid set-cookie"
+                        .setCookieSpec(CookieSpecs.STANDARD).build())
                 .setSSLSocketFactory(csf)
                 .build();
 
