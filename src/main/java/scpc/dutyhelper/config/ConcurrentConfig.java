@@ -49,7 +49,11 @@ public class ConcurrentConfig {
 
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setDefaultRequestConfig(RequestConfig.custom() // fix "invalid set-cookie"
-                        .setCookieSpec(CookieSpecs.STANDARD).build())
+                        .setCookieSpec(CookieSpecs.STANDARD)
+                        .setConnectionRequestTimeout(30_000)
+                        .setConnectTimeout(30_000)
+                        .setSocketTimeout(30_000)
+                        .build())
                 .setSSLSocketFactory(csf)
                 .build();
 

@@ -18,7 +18,7 @@ public class Watcher {
     private final Robot robot;
 
 
-    @Scheduled(fixedRate = 30_000)
+    @Scheduled(fixedRate = 45_000)
     public void runMonitoringState() {
         List<Monitor> monitors = monitorService.getAll();
 
