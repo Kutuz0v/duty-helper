@@ -79,7 +79,7 @@ public class MonitorAnalyzer {
         Integer downTimes = falsePositivesMonitors.getOrDefault(monitor.getId(), 0);
         downTimes++;
         falsePositivesMonitors.put(monitor.getId(), downTimes);
-        return downTimes < 3;
+        return downTimes < 5;
     }
 
     private String getMonitorNameLink(Monitor monitor) {
