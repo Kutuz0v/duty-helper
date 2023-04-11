@@ -18,6 +18,7 @@ spring:
           use_jdbc_metadata_defaults: false
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}

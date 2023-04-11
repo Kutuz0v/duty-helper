@@ -25,6 +25,48 @@ public class MonitorAnalyzer {
      **/
     private final Map<Long, Integer> falsePositivesMonitors = new HashMap<>();
 
+    private static String getTimeDifference(Date start_date,
+                                            Date end_date) {
+
+        long difference_In_Time
+                = end_date.getTime() - start_date.getTime();
+
+        long difference_In_Seconds
+                = TimeUnit.MILLISECONDS
+                .toSeconds(difference_In_Time)
+                % 60;
+
+        long difference_In_Minutes
+                = TimeUnit
+                .MILLISECONDS
+                .toMinutes(difference_In_Time)
+                % 60;
+
+        long difference_In_Hours
+                = TimeUnit
+                .MILLISECONDS
+                .toHours(difference_In_Time)
+                % 24;
+
+        long difference_In_Days
+                = TimeUnit
+                .MILLISECONDS
+                .toDays(difference_In_Time)
+                % 365;
+
+        long difference_In_Years
+                = TimeUnit
+                .MILLISECONDS
+                .toDays(difference_In_Time)
+                / 365L;
+
+        return (difference_In_Years != 0 ? difference_In_Years + " years, " : "") +
+                (difference_In_Days != 0 ? difference_In_Days + " days, " : "") +
+                (difference_In_Hours != 0 ? difference_In_Hours + " hours, " : "") +
+                (difference_In_Minutes != 0 ? difference_In_Minutes + " minutes, " : "") +
+                (difference_In_Seconds != 0 ? difference_In_Seconds + " seconds, " : "");
+    }
+
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
         if (currentMonitor == null ||
@@ -84,48 +126,6 @@ public class MonitorAnalyzer {
 
     private String getMonitorNameLink(Monitor monitor) {
         return String.format("<a href=\"%s\">%s</a>", monitor.getUrl(), monitor.getFriendlyName());
-    }
-
-    private static String getTimeDifference(Date start_date,
-                                            Date end_date) {
-
-        long difference_In_Time
-                = end_date.getTime() - start_date.getTime();
-
-        long difference_In_Seconds
-                = TimeUnit.MILLISECONDS
-                .toSeconds(difference_In_Time)
-                % 60;
-
-        long difference_In_Minutes
-                = TimeUnit
-                .MILLISECONDS
-                .toMinutes(difference_In_Time)
-                % 60;
-
-        long difference_In_Hours
-                = TimeUnit
-                .MILLISECONDS
-                .toHours(difference_In_Time)
-                % 24;
-
-        long difference_In_Days
-                = TimeUnit
-                .MILLISECONDS
-                .toDays(difference_In_Time)
-                % 365;
-
-        long difference_In_Years
-                = TimeUnit
-                .MILLISECONDS
-                .toDays(difference_In_Time)
-                / 365L;
-
-        return (difference_In_Years != 0 ? difference_In_Years + " years, " : "") +
-                (difference_In_Days != 0 ? difference_In_Days + " days, " : "") +
-                (difference_In_Hours != 0 ? difference_In_Hours + " hours, " : "") +
-                (difference_In_Minutes != 0 ? difference_In_Minutes + " minutes, " : "") +
-                (difference_In_Seconds != 0 ? difference_In_Seconds + " seconds, " : "");
     }
 
 }

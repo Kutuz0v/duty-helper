@@ -3,6 +3,8 @@ package scpc.dutyhelper.auth.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,7 @@ import scpc.dutyhelper.exception.BadRequestException;
 import scpc.dutyhelper.exception.ConflictException;
 import scpc.dutyhelper.exception.InternalError;
 import scpc.dutyhelper.exception.NotFoundException;
+import scpc.dutyhelper.telegram.service.TelegramService;
 
 import java.util.List;
 import java.util.Set;
@@ -31,6 +34,10 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
+    @Value("${bot.username}")
+    private String telegramBotName;
+    @Autowired
+    private TelegramService telegramService;
 
     @Override
     public List<User> getAll() {
@@ -116,9 +123,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String generateTelegramConnectUrl(Long id) {
+        String telegramCode = RandomString.make(28);
+        User user = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException(String.format("User with id %d not found", id)));
+        user.setConfirmationCode(telegramCode);
+        repository.save(user);
+        return String.format("https://t.me/%s?start=%s", telegramBotName, telegramCode);
+    }
+
+    @Override
     public User connectTelegram(Long chatId, String code) {
         User user = repository.findByConfirmationCode(code).orElse(null);
+
         if (user != null) {
+            Long telegramChatId = user.getTelegramChatId();
+            if (telegramChatId != null && telegramChatId > 0) {
+                telegramService.sendMessage(
+                        telegramChatId,
+                        "Зв'язка з цим акаунтом анулюється аби ви могли прив'язати інший акаунт Telegram.\n\r" +
+                                "Якщо ви не робили запит на з'єднання з новим акаунтом, негайно змініть пароль до " +
+                                "свого облікового запису на сервісі DutyHelper та зв'яжіть цей акаунт повторно!"
+                );
+            }
             user.setTelegramChatId(chatId);
             user.setConfirmationCode(null);
             return repository.save(user);

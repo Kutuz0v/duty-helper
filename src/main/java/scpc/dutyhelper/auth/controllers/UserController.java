@@ -22,17 +22,23 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
-    public List<User> getAllUsers() {
-        return service.getAll();
-    }
-
     @PostMapping
     @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public User createUser(@RequestBody User user) {
         log(user);
         return service.create(user);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/{id}")
+    public User get(@PathVariable Long id) {
+        return service.get(id);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
+    public List<User> getAllUsers() {
+        return service.getAll();
     }
 
     @PutMapping("/{id}")
@@ -48,6 +54,12 @@ public class UserController {
         return service.update(id, user);
     }
 
+    @GetMapping("/{id}/telegram")
+    @PreAuthorize("hasAuthority('USER')")
+    public String connectTelegram(@PathVariable Long id) {
+        return service.generateTelegramConnectUrl(id);
+    }
+
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
@@ -55,12 +67,6 @@ public class UserController {
         if (isOwnerOrAdmin(id))
             service.delete(id);
         else throw new ForbiddenException("You don't have permission to delete this user");
-    }
-
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/{id}")
-    public User get(@PathVariable Long id) {
-        return service.get(id);
     }
 
     private boolean isOwnerOrAdmin(Long id) {

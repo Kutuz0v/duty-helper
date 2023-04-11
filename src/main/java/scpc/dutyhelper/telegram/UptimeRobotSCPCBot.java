@@ -13,14 +13,12 @@ import scpc.dutyhelper.telegram.service.UserSessionService;
 @Component
 public class UptimeRobotSCPCBot extends TelegramLongPollingBot {
 
-    @Value("${bot.token}")
-    private String botToken;
-
-    @Value("${bot.username}")
-    private String botUsername;
-
     private final Dispatcher dispatcher;
     private final UserSessionService userSessionService;
+    @Value("${bot.token}")
+    private String botToken;
+    @Value("${bot.username}")
+    private String botUsername;
 
     public UptimeRobotSCPCBot(Dispatcher dispatcher, UserSessionService userSessionService) {
         this.dispatcher = dispatcher;

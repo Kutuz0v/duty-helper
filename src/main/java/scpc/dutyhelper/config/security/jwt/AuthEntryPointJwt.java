@@ -18,11 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+    private final ApiExceptionHandler handler;
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
-
-    private final ApiExceptionHandler handler;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
