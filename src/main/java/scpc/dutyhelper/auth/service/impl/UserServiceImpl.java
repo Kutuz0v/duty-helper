@@ -3,7 +3,6 @@ package scpc.dutyhelper.auth.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,10 +33,9 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
+    private final TelegramService telegramService;
     @Value("${bot.username}")
     private String telegramBotName;
-    @Autowired
-    private TelegramService telegramService;
 
     @Override
     public List<User> getAll() {
@@ -138,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
         if (user != null) {
             Long telegramChatId = user.getTelegramChatId();
-            if (telegramChatId != null && telegramChatId > 0) {
+            if (telegramChatId != null && telegramChatId > 0 && !telegramChatId.equals(chatId)) {
                 telegramService.sendMessage(
                         telegramChatId,
                         "Зв'язка з цим акаунтом анулюється аби ви могли прив'язати інший акаунт Telegram.\n\r" +
@@ -150,13 +148,6 @@ public class UserServiceImpl implements UserService {
             user.setConfirmationCode(null);
             return repository.save(user);
         } else return null;
-    }
-
-    @Override
-    public List<Long> getAllTelegramUsersIds() {
-        // TODO Є враження що репозиторій може відразу віддавати List<Long> telegramChatIds
-        return repository.findAllByTelegramChatIdIsNotNull()
-                .stream().map(User::getTelegramChatId).toList();
     }
 
     private UserDetailsImpl getCurrentUser() {

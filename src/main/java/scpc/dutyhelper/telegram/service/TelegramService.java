@@ -7,7 +7,8 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import scpc.dutyhelper.auth.service.UserService;
+import scpc.dutyhelper.auth.model.User;
+import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.telegram.sender.UptimeRobotSCPCBotSender;
 
 import java.util.Arrays;
@@ -20,17 +21,18 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class TelegramService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final UptimeRobotSCPCBotSender botSender;
 
     public void sendMessageForAll(String... message) {
-        userService.getAllTelegramUsersIds().forEach(id -> sendMessage(id, message));
+        userRepository.findAllByTelegramChatIdIsNotNull().stream()
+                .map(User::getTelegramChatId)
+                .forEach(id -> sendMessage(id, message));
     }
 
     public void sendMessage(Long chatId, String... text) {
         Arrays.stream(text).forEach(message -> sendMessage(chatId, message, null));
-//        sendMessage(chatId, text, null);
     }
 
     public void sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {

@@ -19,6 +19,4 @@ public interface UserService {
     String generateTelegramConnectUrl(Long id);
 
     User connectTelegram(Long chatId, String code);
-
-    List<Long> getAllTelegramUsersIds();
 }

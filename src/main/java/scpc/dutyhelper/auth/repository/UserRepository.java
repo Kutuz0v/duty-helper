@@ -17,7 +17,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByConfirmationCode(String confirmationCode);
 
     List<User> findAllByTelegramChatIdIsNotNull();
-
-//    List<Long> findDistinctByTelegramChatIdIsNotNull();
-
 }
