@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
 import scpc.dutyhelper.sitemonitoring.model.State;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -64,6 +65,7 @@ public class Robot {
             monitor.setState(responseEntity.getStatusCode().value() == 200 ? State.UP : State.DOWN);
         }
 
+        monitor.setCheckedAt(new Date());
         monitorAnalyzer.analyzeMonitor(monitor);
     }
 

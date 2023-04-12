@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class MonitorAnalyzer {
     private final TelegramService telegramService;
     private final MonitorService monitorService;
+    private final MonitorAvailabilityService monitorAvailabilityService;
 
     /**
      * <Id, DownTimes>
@@ -69,9 +70,12 @@ public class MonitorAnalyzer {
 
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
+        if (currentMonitor != null) monitorAvailabilityService.saveAvailability(updatedMonitor);
+
         if (currentMonitor == null ||
                 updatedMonitor.equals(currentMonitor) ||
                 State.PAUSED.equals(currentMonitor.getState())) return;
+
         switch (updatedMonitor.getState()) {
             case UP -> recognizeUp(currentMonitor);
             case DOWN -> recognizeDown(currentMonitor);
