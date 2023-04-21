@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
-import scpc.dutyhelper.sitemonitoring.model.State;
 
 import java.util.List;
 
@@ -13,17 +12,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class Watcher {
-
     private final MonitorService monitorService;
     private final Robot robot;
-
 
     @Scheduled(fixedRate = 45_000)
     public void runMonitoringState() {
         List<Monitor> monitors = monitorService.getAll();
 
         monitors.stream()
-                .filter(monitor -> monitor.getState() != State.PAUSED)
+//                .filter(monitor -> monitor.getState() != State.PAUSED)
                 .forEach(robot::checkStatus);
 
     }

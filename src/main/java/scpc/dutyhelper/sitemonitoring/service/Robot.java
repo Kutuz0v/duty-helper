@@ -26,6 +26,11 @@ public class Robot {
 
     @Async
     public void checkStatus(Monitor monitor) {
+        if (monitor.getState() == State.PAUSED) {
+            monitorAnalyzer.analyzeMonitor(monitor);
+            return;
+        }
+
         ResponseEntity<String> responseEntity = null;
 
         try {

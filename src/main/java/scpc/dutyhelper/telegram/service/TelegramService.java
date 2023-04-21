@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import scpc.dutyhelper.auth.model.User;
 import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.telegram.sender.UptimeRobotSCPCBotSender;
@@ -52,6 +53,8 @@ public class TelegramService {
     private void execute(BotApiMethod botApiMethod) {
         try {
             botSender.execute(botApiMethod);
+        } catch (TelegramApiRequestException e) {
+            log.error("Exception: " + e.getMessage());
         } catch (Exception e) {
             log.error("Exception: ", e);
         }

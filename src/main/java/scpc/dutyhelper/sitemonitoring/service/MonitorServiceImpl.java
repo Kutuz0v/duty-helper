@@ -2,6 +2,7 @@ package scpc.dutyhelper.sitemonitoring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import scpc.dutyhelper.exception.NotFoundException;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
 import scpc.dutyhelper.sitemonitoring.repository.MonitorRepository;
 
@@ -21,7 +22,8 @@ public class MonitorServiceImpl implements MonitorService {
 
     @Override
     public Monitor get(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Monitor with id " + id + " not found"));
     }
 
     @Override

@@ -70,7 +70,7 @@ public class MonitorAnalyzer {
 
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
-        if (currentMonitor != null) monitorAvailabilityService.saveAvailability(updatedMonitor);
+        if (currentMonitor != null) monitorAvailabilityService.approveChangeState(updatedMonitor);
 
         if (currentMonitor == null ||
                 updatedMonitor.equals(currentMonitor) ||
@@ -84,11 +84,18 @@ public class MonitorAnalyzer {
         monitorService.update(updatedMonitor.getId(), currentMonitor);
     }
 
-    private void recognizePaused(Monitor monitor) {
+    private void recognizeUp(Monitor monitor) {
         falsePositivesMonitors.remove(monitor.getId());
-        monitor.setCheckedAt(new Date());
-        monitor.setState(State.PAUSED);
-        String message = String.format("Monitor %s is PAUSED", getMonitorNameLink(monitor));
+        Date now = new Date();
+        String timeDifference = getTimeDifference(
+                Optional.ofNullable(monitor.getCheckedAt()).orElse(now),
+                now);
+        monitor.setCheckedAt(now);
+        String monitorNameLink = getMonitorNameLink(monitor);
+        String message = monitor.getState() == State.DOWN ?
+                String.format("Monitor %s is UP after %s", monitorNameLink, timeDifference) :
+                String.format("Monitor %s is UP", monitorNameLink);
+        monitor.setState(State.UP);
         telegramService.sendMessageForAll(message);
         log.warn(message);
     }
@@ -105,18 +112,11 @@ public class MonitorAnalyzer {
                     String.format("Monitor %s have %d down times", monitor, falsePositivesMonitors.get(monitor.getId())));
     }
 
-    private void recognizeUp(Monitor monitor) {
+    private void recognizePaused(Monitor monitor) {
         falsePositivesMonitors.remove(monitor.getId());
-        Date now = new Date();
-        String timeDifference = getTimeDifference(
-                Optional.ofNullable(monitor.getCheckedAt()).orElse(now),
-                now);
-        monitor.setCheckedAt(now);
-        String monitorNameLink = getMonitorNameLink(monitor);
-        String message = monitor.getState() == State.DOWN ?
-                String.format("Monitor %s is UP after %s", monitorNameLink, timeDifference) :
-                String.format("Monitor %s is UP", monitorNameLink);
-        monitor.setState(State.UP);
+        monitor.setCheckedAt(new Date());
+        monitor.setState(State.PAUSED);
+        String message = String.format("Monitor %s is PAUSED", getMonitorNameLink(monitor));
         telegramService.sendMessageForAll(message);
         log.warn(message);
     }

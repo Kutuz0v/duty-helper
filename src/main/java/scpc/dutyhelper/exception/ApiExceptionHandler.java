@@ -1,6 +1,7 @@
 package scpc.dutyhelper.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailAuthenticationException;
@@ -70,7 +71,18 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = {MailAuthenticationException.class})
     public ResponseEntity<Object> notFoundException(MailAuthenticationException e) {
-        return baseResponseEntity(new InternalError(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error("error: " + e.getMessage());
+        e.printStackTrace();
+        String message = "Internal (SQL) error! \n\rYou can't resolve this problem. Please contact to admin.";
+        return baseResponseEntity(new InternalError(message), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {DataIntegrityViolationException.class})
+    public ResponseEntity<Object> notFoundException(DataIntegrityViolationException e) {
+        log.error("error: " + e.getMessage());
+        e.printStackTrace();
+        String message = "Internal (SQL) error! \n\rYou can't resolve this problem. Please contact to admin.";
+        return baseResponseEntity(new InternalError(message), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private <T extends Exception> ResponseEntity<Object> baseResponseEntity(T e, HttpStatus status) {

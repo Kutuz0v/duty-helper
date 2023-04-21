@@ -54,6 +54,6 @@ public class Monitor {
 
     @Override
     public String toString() {
-        return friendlyName + ": " + state;
+        return "id: " + id + ", " + friendlyName + ": " + state;
     }
 }
