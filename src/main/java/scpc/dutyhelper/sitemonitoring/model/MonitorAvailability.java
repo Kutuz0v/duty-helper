@@ -24,7 +24,6 @@ public class MonitorAvailability {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    //    @Cascade(ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne()
     @JoinColumn(

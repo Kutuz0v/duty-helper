@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -28,6 +29,8 @@ public class Monitor {
     @Column(length = 20)
     private State state;
     private Date checkedAt;
+    @OneToMany(mappedBy = "monitor", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    private List<MonitorAvailability> availabilities;
 
     @Override
     public boolean equals(Object o) {
