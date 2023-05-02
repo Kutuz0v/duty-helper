@@ -74,7 +74,7 @@ public class ConcurrentConfig {
             URI uri = request.getURI();
             headers.set(HttpHeaders.HOST, uri.getHost());
             headers.setAccept(List.of(MediaType.ALL));
-            headers.set(HttpHeaders.USER_AGENT, "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com)");
+            headers.set(HttpHeaders.USER_AGENT, "SCPC_UptimeRobot/1.0");
             return execution.execute(request, body);
         }
     }
