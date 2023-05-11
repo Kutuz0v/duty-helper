@@ -15,6 +15,7 @@ import java.util.List;
 public class KeyboardHelper {
 
     // Will be deleted on refactoring stage
+    @Deprecated
     public ReplyKeyboardMarkup buildCitiesMenu(List<String> cities) {
         List<KeyboardButton> buttons = List.of(
                 new KeyboardButton("Київ"),
@@ -32,11 +33,14 @@ public class KeyboardHelper {
     }
 
     public ReplyKeyboardMarkup buildMainMenu() {
-        KeyboardRow keyboardRow = new KeyboardRow();
-        keyboardRow.add("\uD83D\uDC40️Доступність сервісу");
+        KeyboardRow keyboardRow1 = new KeyboardRow();
+        keyboardRow1.add(Constants.BTN_CHECK_ACCESSIBILITY);
+
+        KeyboardRow keyboardRow2 = new KeyboardRow();
+        keyboardRow2.add(Constants.BTN_UNAVAILABLE_RESOURCES);
 
         return ReplyKeyboardMarkup.builder()
-                .keyboard(List.of(keyboardRow))
+                .keyboard(List.of(keyboardRow1, keyboardRow2))
                 .selective(true)
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)

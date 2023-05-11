@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import scpc.dutyhelper.exception.NotFoundException;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
 import scpc.dutyhelper.sitemonitoring.model.MonitorAvailability;
+import scpc.dutyhelper.sitemonitoring.model.State;
 import scpc.dutyhelper.sitemonitoring.repository.MonitorRepository;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,11 @@ public class MonitorServiceImpl implements MonitorService {
         List<Monitor> monitors = repository.findAll();
         monitors.forEach(this::clearAvailabilityToLastDay);
         return monitors;
+    }
+
+    @Override
+    public List<Monitor> getUnavailable() {
+        return repository.findAllByStateIs(State.DOWN);
     }
 
     @Override

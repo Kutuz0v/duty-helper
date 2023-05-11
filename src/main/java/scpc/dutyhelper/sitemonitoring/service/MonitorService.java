@@ -12,6 +12,8 @@ public interface MonitorService {
 
     List<Monitor> getAll();
 
+    List<Monitor> getUnavailable();
+
     Monitor update(Long id, Monitor monitor);
 
     void delete(Long id);

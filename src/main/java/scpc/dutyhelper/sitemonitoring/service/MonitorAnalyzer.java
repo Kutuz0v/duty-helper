@@ -11,7 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+
+import static scpc.dutyhelper.util.TimeUtil.getTimeDifference;
 
 @Service
 @RequiredArgsConstructor
@@ -25,48 +26,6 @@ public class MonitorAnalyzer {
      * <Id, DownTimes>
      **/
     private final Map<Long, Integer> falsePositivesMonitors = new HashMap<>();
-
-    private static String getTimeDifference(Date start_date,
-                                            Date end_date) {
-
-        long difference_In_Time
-                = end_date.getTime() - start_date.getTime();
-
-        long difference_In_Seconds
-                = TimeUnit.MILLISECONDS
-                .toSeconds(difference_In_Time)
-                % 60;
-
-        long difference_In_Minutes
-                = TimeUnit
-                .MILLISECONDS
-                .toMinutes(difference_In_Time)
-                % 60;
-
-        long difference_In_Hours
-                = TimeUnit
-                .MILLISECONDS
-                .toHours(difference_In_Time)
-                % 24;
-
-        long difference_In_Days
-                = TimeUnit
-                .MILLISECONDS
-                .toDays(difference_In_Time)
-                % 365;
-
-        long difference_In_Years
-                = TimeUnit
-                .MILLISECONDS
-                .toDays(difference_In_Time)
-                / 365L;
-
-        return (difference_In_Years != 0 ? difference_In_Years + " years, " : "") +
-                (difference_In_Days != 0 ? difference_In_Days + " days, " : "") +
-                (difference_In_Hours != 0 ? difference_In_Hours + " hours, " : "") +
-                (difference_In_Minutes != 0 ? difference_In_Minutes + " minutes, " : "") +
-                (difference_In_Seconds != 0 ? difference_In_Seconds + " seconds, " : "");
-    }
 
     public void analyzeMonitor(Monitor updatedMonitor) {
         Monitor currentMonitor = monitorService.get(updatedMonitor.getId());
@@ -104,7 +63,7 @@ public class MonitorAnalyzer {
         if (!isFalsePositivesDown(monitor)) {
             monitor.setCheckedAt(new Date());
             monitor.setState(State.DOWN);
-            String message = String.format("Monitor %s is DOWN", getMonitorNameLink(monitor));
+            String message = String.format("Ресурс %s недоступний", getMonitorNameLink(monitor));
             telegramService.sendMessageForAll(message);
             log.warn(message);
         } else
