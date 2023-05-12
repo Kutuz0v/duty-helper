@@ -52,8 +52,8 @@ public class MonitorAnalyzer {
         monitor.setCheckedAt(now);
         String monitorNameLink = getMonitorNameLink(monitor);
         String message = monitor.getState() == State.DOWN ?
-                String.format("Monitor %s is UP after %s", monitorNameLink, timeDifference) :
-                String.format("Monitor %s is UP", monitorNameLink);
+                String.format("Ресурс %s доступний після %s", monitorNameLink, timeDifference) :
+                String.format("Ресурс %s доступний", monitorNameLink);
         monitor.setState(State.UP);
         telegramService.sendMessageForAll(message);
         log.warn(message);
@@ -75,7 +75,7 @@ public class MonitorAnalyzer {
         falsePositivesMonitors.remove(monitor.getId());
         monitor.setCheckedAt(new Date());
         monitor.setState(State.PAUSED);
-        String message = String.format("Monitor %s is PAUSED", getMonitorNameLink(monitor));
+        String message = String.format("Моніторинг ресурсу %s призупинено", getMonitorNameLink(monitor));
         telegramService.sendMessageForAll(message);
         log.warn(message);
     }
