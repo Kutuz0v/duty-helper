@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,8 @@ public class Monitor {
     private Date checkedAt;
     @OneToMany(mappedBy = "monitor", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<MonitorAvailability> availabilities;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime stateFrom;
 
     @Override
     public boolean equals(Object o) {
