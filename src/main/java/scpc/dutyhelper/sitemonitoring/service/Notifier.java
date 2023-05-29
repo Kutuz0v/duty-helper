@@ -2,6 +2,7 @@ package scpc.dutyhelper.sitemonitoring.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import scpc.dutyhelper.sitemonitoring.model.Monitor;
@@ -24,7 +25,8 @@ public class Notifier {
     private final MonitorService monitorService;
     private final TelegramService telegramService;
     private final Map<Monitor, LocalDateTime> monitorsToNotifyDown = new ConcurrentHashMap<>();
-    private final long UNAVAILABLE_NOTIFICATION_MINUTES_DELAY = 10;
+    @Value("${monitoring.unavailableNotificationMinutesDelay}")
+    private long UNAVAILABLE_NOTIFICATION_MINUTES_DELAY;
 
     @Scheduled(fixedRate = 15_000)
     public void notifyUnavailable() {

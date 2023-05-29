@@ -10,8 +10,10 @@ import scpc.dutyhelper.sitemonitoring.repository.MonitorRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,18 +44,19 @@ public class MonitorServiceImpl implements MonitorService {
 
     @Override
     public List<Monitor> getUnavailable() {
-        return repository.findAllByStateIs(State.DOWN);
+        return repository.findAllByStateIs(State.DOWN).stream()
+                .sorted(Comparator.comparing(Monitor::getStateFrom))
+                .toList();
     }
 
     @Override
     public Monitor update(Long id, Monitor monitor) {
-        if (get(id) == null) {
-            return null;
-        }
-        monitor.setId(id);
-        Monitor updated = repository.save(monitor);
-        repository.flush();
-        return updated;
+        Monitor old = get(id);
+        old.setFriendlyName(monitor.getFriendlyName());
+        old.setUrl(monitor.getUrl());
+        if (monitor.getState() != null) old.setState(monitor.getState());
+        if (monitor.getStateFrom() != null) old.setStateFrom(monitor.getStateFrom());
+        return repository.save(old);
     }
 
     @Override
@@ -73,7 +76,7 @@ public class MonitorServiceImpl implements MonitorService {
                     if (o2.getEndPeriod() == null) o2.setEndPeriod(LocalDateTime.now());
                     return o1.getEndPeriod().compareTo(o2.getEndPeriod());
                 })
-                .toList();
+                .collect(Collectors.toList());
         monitor.setAvailabilities(lastDayAvailabilities);
     }
 }
