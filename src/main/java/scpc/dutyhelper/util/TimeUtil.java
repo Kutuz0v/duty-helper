@@ -43,6 +43,6 @@ public class TimeUtil {
                 (difference_In_Days != 0 ? difference_In_Days + " д., " : "") +
                 (difference_In_Hours != 0 ? difference_In_Hours + " г., " : "") +
                 (difference_In_Minutes != 0 ? difference_In_Minutes + " хв., " : "") +
-                (difference_In_Seconds != 0 ? difference_In_Seconds + " сек., " : "");
+                (difference_In_Seconds != 0 ? difference_In_Seconds + " сек.    , " : "");
     }
 }

@@ -44,7 +44,7 @@ public class Robot {
         // недоступний? ++
         catch (ResourceAccessException e) {
             String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
-            log.error("1, {}: {}", monitor.getFriendlyName(), message);
+            log.warn("1, {}: {}", monitor.getFriendlyName(), message);
             monitor.setState(State.DOWN);
         }
         // відповідь є але з проблемами
@@ -57,12 +57,12 @@ public class Robot {
             } else {
                 monitor.setState(State.DOWN);
                 String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
-                log.error("2, {}: {}", monitor.getFriendlyName(), message);
+                log.warn("2, {}: {}", monitor.getFriendlyName(), message);
             }
 
         } catch (Exception e) {
             String message = Objects.requireNonNull(e.getMessage()).length() > 1000 ? e.getMessage().substring(0, 1000) : e.getMessage();
-            log.error("3, {}: {}", monitor.getFriendlyName(), message);
+            log.warn("3, {}: {}", monitor.getFriendlyName(), message);
             monitor.setState(State.DOWN);
         }
 

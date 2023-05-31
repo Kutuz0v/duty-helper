@@ -39,13 +39,10 @@ public class GetUnavailableResourcesHandler extends UserRequestHandler {
     }
 
     private String unavailableResourceToTelegramMessage(Monitor monitor) {
-        LocalDateTime startPeriod = monitor.getAvailabilities().stream()
-                .filter(monitorAvail -> monitorAvail.getEndPeriod() == null).toList().get(0).getStartPeriod();
-
         return String.format("<a href=\"%s\">%s</a> %s\n",
                 monitor.getUrl(),
                 monitor.getFriendlyName(),
-                getTimeDifference(Date.from(startPeriod.atZone(ZoneId.systemDefault()).toInstant()), new Date()));
+                getTimeDifference(Date.from(monitor.getStateFrom().atZone(ZoneId.systemDefault()).toInstant()), new Date()));
     }
 
     private String getUnavailableResourcesMessage() {
