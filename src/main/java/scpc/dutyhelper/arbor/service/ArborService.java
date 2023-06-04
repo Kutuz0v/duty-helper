@@ -43,10 +43,15 @@ public class ArborService {
     public void checkDos() {
         List<DosRecord> records = new ArrayList<>();
         try {
-            String arborUrl = "/arborws/mitigations/status";
+            String arborUrl = "/arborws/alerts";
             records = Arrays.stream(Objects.requireNonNull(
                             restTemplate.getForEntity(
-                                    arborHost + arborUrl,
+                                    arborHost + arborUrl +
+                                            String.format("?api_key=%s&format=%s&limit=%s&filter=%s",
+                                                    arborApiKey,
+                                                    "json",
+                                                    "15",
+                                                    "DoS"),
                                     ArborAlert[].class,
                                     arborUriVariables
                             ).getBody()))
