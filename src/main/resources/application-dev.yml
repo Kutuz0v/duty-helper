@@ -1,2 +1,6 @@
 monitoring:
   unavailableNotificationMinutesDelay: 2
+
+arbor:
+  host: http://localhost:5000
+  apiKey: ARBOR_API_KEY

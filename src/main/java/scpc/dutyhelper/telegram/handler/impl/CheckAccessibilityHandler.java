@@ -13,7 +13,7 @@ import scpc.dutyhelper.telegram.service.UserSessionService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
@@ -35,8 +35,8 @@ public class CheckAccessibilityHandler extends UserRequestHandler {
         telegramService.sendMessage(request.getChatId(),
                 String.format(
                         "Станом на %s сервіс Duty Helper активний",
-                        LocalDateTime.now()
-                                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))),
+                        LocalDateTime.now().format(DateTimeFormatter
+                                .ofPattern("d MMMM HH:mm", new Locale("uk", "UA")))),
                 replyKeyboardMarkup);
 
         String text = request.getUpdate().getMessage().getText();

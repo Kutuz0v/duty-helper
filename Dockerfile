@@ -9,5 +9,5 @@ RUN mvn package
 FROM openjdk:16-slim
 WORKDIR /app
 COPY --from=build /app/target/duty-helper-1.0.jar /app
-EXPOSE 8080
-CMD ["java", "-jar", "/app/duty-helper-1.0.jar"]
+EXPOSE 5000
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/duty-helper-1.0.jar"]

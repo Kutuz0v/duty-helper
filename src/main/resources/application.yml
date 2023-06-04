@@ -49,3 +49,7 @@ monitoring:
 bot:
   token: ${TELEGRAM_TOKEN}
   username: ${TELEGRAM_USERNAME}
+
+arbor:
+  host: ${ARBOR_HOST}
+  apiKey: ${ARBOR_API_KEY}
