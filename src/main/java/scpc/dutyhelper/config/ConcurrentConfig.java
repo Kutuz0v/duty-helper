@@ -2,6 +2,7 @@ package scpc.dutyhelper.config;
 
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,7 +46,7 @@ public class ConcurrentConfig {
                 .loadTrustMaterial(null, acceptingTrustStrategy)
                 .build();
 
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setDefaultRequestConfig(RequestConfig.custom() // fix "invalid set-cookie"
