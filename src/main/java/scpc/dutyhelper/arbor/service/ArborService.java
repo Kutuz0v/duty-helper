@@ -25,19 +25,10 @@ public class ArborService {
     private final RestTemplate restTemplate;
     private final DosRepository repository;
     private final TelegramService telegramService;
-    private final Map<String, String> arborUriVariables = new HashMap<>();
     @Value("${arbor.host}")
     private String arborHost;
     @Value("${arbor.apiKey}")
     private String arborApiKey;
-
-    {
-        arborUriVariables.put("api_key", arborApiKey);
-        arborUriVariables.put("format", "json");
-        arborUriVariables.put("limit", "15");
-        arborUriVariables.put("filter", "Dos");
-    }
-
 
     @Scheduled(fixedRate = 15_000)
     public void checkDos() {
@@ -52,8 +43,7 @@ public class ArborService {
                                                     "json",
                                                     "15",
                                                     "DoS"),
-                                    ArborAlert[].class,
-                                    arborUriVariables
+                                    ArborAlert[].class
                             ).getBody()))
                     .filter(alert -> alert.getDirection().equals("Incoming"))
                     .map(ArborAlert::toDosRecord)
