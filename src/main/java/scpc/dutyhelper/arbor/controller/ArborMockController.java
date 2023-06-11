@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Profile("dev")
-@RequestMapping("/arborws/mitigations/status")
+@RequestMapping("/arborws/alerts")
 @RequiredArgsConstructor
 public class ArborMockController {
 

@@ -19,8 +19,7 @@ public class Watcher {
     public void runMonitoringState() {
         List<Monitor> monitors = monitorService.getAll();
 
-        monitors.stream()
-//                .filter(monitor -> monitor.getState() != State.PAUSED)
+        monitors
                 .forEach(robot::checkStatus);
 
     }
