@@ -94,8 +94,7 @@ public class ArborService {
                             value.setStopTime(record.getStopTime());
                         }
                         if (!record.getMaxImpactBps().equals(value.getMaxImpactBps())) {
-                            message.append(String.format("❗️Значення пікового навантаження змінилося на: %s\n", record.getMaxImpactBps()));
-                            message.append(unexpected);
+                            message.append("❕Підвищення пікового навантаження.\n");
                             value.setMaxImpactBps(record.getMaxImpactBps());
                         }
                         if (!record.getIp().equals(value.getIp())) {
@@ -139,7 +138,7 @@ public class ArborService {
                         stringifyImpact(record.getMaxImpactBps())) +
                 String.format("%s - %s",
                         record.getStartTime().format(formatter),
-                        record.getOngoing() ? "ongoing" :
+                        record.getOngoing() ? "триває" :
                                 Optional.ofNullable(stopTime).orElseGet(() -> record.getStopTime().format(formatter)) +
                                         " (" + calculateTimeDifference(record.getStartTime(), record.getStopTime()) + ")");
     }
