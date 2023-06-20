@@ -125,8 +125,7 @@ public class ArborService {
                 () -> {
                     DosRecord saved = repository.save(record);
                     String message = dosToMessage(saved);
-                    if (record.getMaxImpactBps() > LIMIT_MAX_IMPACT_TO_NOTIFY)
-                        telegramService.sendMessageForAll(message);
+                    telegramService.sendMessageForAll(message);
                     log.info("NEW: " + message.replaceAll("\n", ", "));
                 }
         ));
