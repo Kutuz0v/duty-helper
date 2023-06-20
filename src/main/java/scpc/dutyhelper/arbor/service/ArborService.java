@@ -29,6 +29,7 @@ public class ArborService {
     private String arborHost;
     @Value("${arbor.apiKey}")
     private String arborApiKey;
+    private final Long LIMIT_MAX_IMPACT_TO_NOTIFY = 200000000L;
 
     @Scheduled(fixedRate = 15_000)
     public void checkDos() {
@@ -47,6 +48,12 @@ public class ArborService {
                             ).getBody()))
                     .filter(alert -> alert.getDirection().equals("Incoming"))
                     .map(ArborAlert::toDosRecord)
+                    .peek(record -> {
+                        record.setStartTime(record.getStartTime().plusHours(3));
+                        if (record.getStopTime() != null) {
+                            record.setStopTime(record.getStopTime().plusHours(3));
+                        }
+                    })
                     .sorted(Comparator.comparingLong(DosRecord::getArborAlertId))
                     .collect(Collectors.toList());
         } catch (RestClientException e) {
@@ -110,14 +117,16 @@ public class ArborService {
 
                         repository.save(value);
                         message.append(dosToMessage(record));
-                        telegramService.sendMessageForAll(message.toString());
+                        if (record.getMaxImpactBps() > LIMIT_MAX_IMPACT_TO_NOTIFY)
+                            telegramService.sendMessageForAll(message.toString());
                         log.info("UPDATE: " + message.toString().replaceAll("\n", ", "));
                     }
                 },
                 () -> {
                     DosRecord saved = repository.save(record);
                     String message = dosToMessage(saved);
-                    telegramService.sendMessageForAll(message);
+                    if (record.getMaxImpactBps() > LIMIT_MAX_IMPACT_TO_NOTIFY)
+                        telegramService.sendMessageForAll(message);
                     log.info("NEW: " + message.replaceAll("\n", ", "));
                 }
         ));
