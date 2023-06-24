@@ -53,3 +53,10 @@ bot:
 arbor:
   host: ${ARBOR_HOST}
   apiKey: ${ARBOR_API_KEY}
+
+akamai:
+  host: ${AKAMAI_HOST}
+  config-id: ${AKAMAI_CONFIG_ID}
+  access-token: ${AKAMAI_ACCESS_TOKEN}
+  client-token: ${AKAMAI_CLIENT_TOKEN}
+  client-secret: ${AKAMAI_CLIENT_SECRET}

@@ -13,6 +13,9 @@ import scpc.dutyhelper.auth.repository.UserRepository;
 import scpc.dutyhelper.telegram.sender.UptimeRobotSCPCBotSender;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This service allows to communicate with Telegram API
@@ -26,6 +29,8 @@ public class TelegramService {
 
     private final UptimeRobotSCPCBotSender botSender;
 
+    private static final int MAX_MESSAGE_LENGTH = 4000;
+
     public void sendMessageForAll(String... message) {
         userRepository.findAllByTelegramChatIdIsNotNull().stream()
                 .map(User::getTelegramChatId)
@@ -33,7 +38,9 @@ public class TelegramService {
     }
 
     public void sendMessage(Long chatId, String... text) {
-        Arrays.stream(text).forEach(message -> sendMessage(chatId, message, null));
+        Arrays.stream(text)
+                .flatMap(message -> splitString(message).stream())
+                .forEach(part -> sendMessage(chatId, part, null));
     }
 
     public void sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
@@ -47,6 +54,13 @@ public class TelegramService {
                 .replyMarkup(replyKeyboard)
                 .build();
         execute(sendMessage);
+    }
+
+    private List<String> splitString(String input) {
+        int length = input.length();
+        return IntStream.range(0, (length + MAX_MESSAGE_LENGTH - 1) / MAX_MESSAGE_LENGTH)
+                .mapToObj(i -> input.substring(i * MAX_MESSAGE_LENGTH, Math.min((i + 1) * MAX_MESSAGE_LENGTH, length)))
+                .collect(Collectors.toList());
     }
 
     // Потрібно параметризувати? Чим?

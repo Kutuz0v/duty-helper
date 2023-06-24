@@ -35,7 +35,7 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableScheduling
 @EnableAsync
-public class ConcurrentConfig {
+public class RestTemplateBeanConfig {
 
     @Bean
     public RestTemplate restTemplate()
