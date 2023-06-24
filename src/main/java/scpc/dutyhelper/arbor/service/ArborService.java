@@ -11,6 +11,7 @@ import scpc.dutyhelper.arbor.model.ArborAlert;
 import scpc.dutyhelper.arbor.model.DosRecord;
 import scpc.dutyhelper.arbor.repository.DosRepository;
 import scpc.dutyhelper.telegram.service.TelegramService;
+import scpc.dutyhelper.util.AdminNotifier;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -25,6 +26,7 @@ public class ArborService {
     private final RestTemplate restTemplate;
     private final DosRepository repository;
     private final TelegramService telegramService;
+    private final AdminNotifier adminNotifier;
     @Value("${arbor.host}")
     private String arborHost;
     @Value("${arbor.apiKey}")
@@ -42,7 +44,7 @@ public class ArborService {
                                             String.format("?api_key=%s&format=%s&limit=%s&filter=%s",
                                                     arborApiKey,
                                                     "json",
-                                                    "15",
+                                                    "100",
                                                     "DoS"),
                                     ArborAlert[].class
                             ).getBody()))
@@ -58,7 +60,7 @@ public class ArborService {
                     .collect(Collectors.toList());
         } catch (RestClientException e) {
             log.error(e.getMessage());
-            telegramService.sendMessage(440024209L, "Сервіс не може обробити відповідь Арбора!\n" + e);
+            adminNotifier.notifyAdmin("Сервіс не може обробити відповідь Арбора!\n" + e);
         }
 
         analyzeRecords(records);
@@ -117,7 +119,7 @@ public class ArborService {
 
                         repository.save(value);
                         message.append(dosToMessage(record));
-                        if (record.getMaxImpactBps() > LIMIT_MAX_IMPACT_TO_NOTIFY)
+                        if (record.getMaxImpactBps() > LIMIT_MAX_IMPACT_TO_NOTIFY || !record.getOngoing())
                             telegramService.sendMessageForAll(message.toString());
                         log.info("UPDATE: " + message.toString().replaceAll("\n", ", "));
                     }
