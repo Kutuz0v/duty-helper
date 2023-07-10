@@ -4,3 +4,6 @@ monitoring:
 arbor:
   host: http://localhost:5000
   apiKey: ARBOR_API_KEY
+
+akamai:
+  limit-max-impact-hit-sec: 20

@@ -40,6 +40,9 @@ public class AkamaiService {
     private String clientToken;
     @Value("${akamai.client-secret}")
     private String clientSecret;
+    @Value("${akamai.limit-max-impact-hit-sec}")
+    private Integer LIMIT_MAX_IMPACT_TO_NOTIFY;
+
 
     @Scheduled(fixedRate = 60_000)
     public void monitorAkamai() {
@@ -67,7 +70,7 @@ public class AkamaiService {
                 .size(response.getBytes().length)
                 .build());
 
-        if (akamaiStatistic.getHitSec() > 300) {
+        if (akamaiStatistic.getHitSec() > LIMIT_MAX_IMPACT_TO_NOTIFY) {
             adminNotifier.notifyAdmin("‼️Akamai has " + hitSec + " hits/sec!");
         }
 
@@ -81,7 +84,7 @@ public class AkamaiService {
                 .host(host)
                 .build();
 
-        String query = String.format("from=%s&to=%s", from, to);
+        String query = String.format("from=%s&to=%s&limit=%s", from, to, 400_000);
 
         try (CloseableHttpClient client = HttpClientBuilder.create()
                 .addInterceptorFirst(new ApacheHttpClientEdgeGridInterceptor(credential))
@@ -99,11 +102,11 @@ public class AkamaiService {
             }
 
             return EntityUtils.toString(response.getEntity());
-
         } catch (IOException | URISyntaxException | RuntimeException e) {
             adminNotifier.notifyAdmin(e.getMessage());
             log.error(e.getMessage());
         }
+
         return null;
     }
 

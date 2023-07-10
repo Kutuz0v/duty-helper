@@ -60,3 +60,4 @@ akamai:
   access-token: ${AKAMAI_ACCESS_TOKEN}
   client-token: ${AKAMAI_CLIENT_TOKEN}
   client-secret: ${AKAMAI_CLIENT_SECRET}
+  limit-max-impact-hit-sec: 300

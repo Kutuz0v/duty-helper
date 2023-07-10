@@ -10,4 +10,4 @@ FROM openjdk:16-slim
 WORKDIR /app
 COPY --from=build /app/target/duty-helper-1.0.jar /app
 EXPOSE 5000
-CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/duty-helper-1.0.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-Xmx10240m -Xms256m", "-jar", "/app/duty-helper-1.0.jar"]
