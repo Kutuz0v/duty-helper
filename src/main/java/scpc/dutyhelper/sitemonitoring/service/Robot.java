@@ -36,7 +36,7 @@ public class Robot {
         try {
             responseEntity = restTemplate.exchange(
                     monitor.getUrl(),
-                    HttpMethod.GET,
+                    HttpMethod.HEAD,
                     HttpEntity.EMPTY,
                     String.class
             );

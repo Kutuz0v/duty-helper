@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import scpc.dutyhelper.akamai.model.AkamaiStatistic;
 import scpc.dutyhelper.akamai.repository.AkamaiStatisticRepository;
+import scpc.dutyhelper.telegram.service.TelegramService;
 import scpc.dutyhelper.util.AdminNotifier;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.time.ZoneId;
 public class AkamaiService {
     private final AkamaiStatisticRepository repository;
     private final AdminNotifier adminNotifier;
+    private final TelegramService telegramService;
 
     @Value("${akamai.host}")
     private String host;
@@ -71,7 +73,13 @@ public class AkamaiService {
                 .build());
 
         if (akamaiStatistic.getHitSec() > LIMIT_MAX_IMPACT_TO_NOTIFY) {
-            adminNotifier.notifyAdmin("‼️Akamai has " + hitSec + " hits/sec!");
+            StringBuilder message = new StringBuilder("‼️Akamai фіксує атаку " + hitSec + " зап/сек");
+            if (hitSec > 6_500)
+                message.append(" або більше!");
+            else message.append("!");
+            message.append("\nЦе сповіщення тільки повідомляє про атаку, тому не гарантує точності параметрів атаки. ");
+            message.append("Для більш точної інформації рекомендується використати сервіс Akamai.");
+            telegramService.sendMessageForAll(message.toString());
         }
 
     }
