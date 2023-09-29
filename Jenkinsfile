@@ -10,18 +10,17 @@ pipeline {
       steps {
         sh 'pwd && hostname'
         sh 'echo "hello world ${EXCAMPLE_CREDS}"'
-        sh 'echo "DB_HOSTNAME is $DB_HOSTNAME"'
       }
     }
 
     stage('up fake container') {
       steps {
-        sh 'docker run --name $EXCAMPLE_CREDS -d nginx'
+        sh 'docker run --env-file ${EXCAMPLE_CREDS} --name test-env-file -d nginx'
       }
     }
 
   }
   environment {
-    EXCAMPLE_CREDS = credentials('c1a5809d-b070-4e45-a125-542e95e6d214')
+    EXCAMPLE_CREDS = credentials('dev-server-env')
   }
 }
