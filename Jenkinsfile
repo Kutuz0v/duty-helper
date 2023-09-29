@@ -15,6 +15,6 @@ pipeline {
 
   }
   environment {
-    EXCAMPLE_CREDS = credentials('secret-id')
+    EXCAMPLE_CREDS = credentials('DB_PASSWORD')
   }
 }
