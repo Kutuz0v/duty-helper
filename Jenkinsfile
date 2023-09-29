@@ -10,6 +10,7 @@ pipeline {
       steps {
         sh 'pwd && hostname'
         sh 'echo "hello world ${EXCAMPLE_CREDS}"'
+        sh 'echo "DB_HOSTNAME is $DB_HOSTNAME"'
       }
     }
 
