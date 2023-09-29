@@ -15,6 +15,6 @@ pipeline {
 
   }
   environment {
-    EXCAMPLE_CREDS = credentials('c1a5809d-b070-4e45-a125-542e95e6d214')
+    EXCAMPLE_CREDS = credentials('my test creds')
   }
 }
