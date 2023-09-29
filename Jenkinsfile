@@ -16,7 +16,7 @@ pipeline {
 
     stage('up fake container') {
       steps {
-        sh 'docker run --name EXCAMPLE_CREDS -d nginx'
+        sh 'docker run --name $EXCAMPLE_CREDS -d nginx'
       }
     }
 
