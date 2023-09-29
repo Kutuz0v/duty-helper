@@ -9,7 +9,7 @@ pipeline {
     stage('pwd') {
       steps {
         sh 'pwd && hostname'
-        sh 'echo hello world $EXCAMPLE_CREDS_NAME'
+        sh "echo hello world ${EXCAMPLE_CREDS_NAME}"
       }
     }
 
