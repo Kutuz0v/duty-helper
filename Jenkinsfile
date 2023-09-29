@@ -14,6 +14,12 @@ pipeline {
       }
     }
 
+    stage('up fake container') {
+      steps {
+        sh 'docker run --name EXCAMPLE_CREDS -d nginx'
+      }
+    }
+
   }
   environment {
     EXCAMPLE_CREDS = credentials('c1a5809d-b070-4e45-a125-542e95e6d214')
