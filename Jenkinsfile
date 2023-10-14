@@ -38,7 +38,7 @@ pipeline {
 --name api \
 --network duty-helper \
 -p 5000:5000 \
---env-file ${ENV_FILE}
+--env-file $ENV_FILE
 -v /etc/timezone:/etc/timezone:ro \
 -v /etc/localtime:/etc/localtime:ro \
 -v /var/log:/var/log \
