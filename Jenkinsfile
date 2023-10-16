@@ -8,7 +8,7 @@ pipeline {
   environment {
         TOKEN = credentials('jenkins-reporter-telegram-token')
         CHAT_ID = credentials('m.hurin-telegram.chatId')
-        ENV_FILE = credentials('prod-env-file')
+        ENV_FILE = credentials('pre-prod-env-file')
   }
     
   stages {
@@ -30,26 +30,22 @@ pipeline {
       }
     }
     
-//sh 'docker run --env-file ${EXCAMPLE_CREDS} --name test-env-file -d nginx'
-    
     stage('Deploying') {
       steps {
-          sh '''echo $ENV_FILE'''
-          sh '''echo $ENV_FILE > myFile'''
         sh 'docker stop api'
         sh 'docker rm api'
+        
         sh '''docker run \
---name api \
---network duty-helper \
--p 5000:5000 \
---env-file $ENV_FILE \
--v $ENV_FILE:$ENV_FILE:ro \
--v /etc/timezone:/etc/timezone:ro \
--v /etc/localtime:/etc/localtime:ro \
--v /var/log:/var/log \
---restart=always \
--d \
-api'''
+                --name api \
+                --network duty-helper \
+                -p 5000:5000 \
+                --env-file $ENV_FILE \
+                -v /etc/timezone:/etc/timezone:ro \
+                -v /etc/localtime:/etc/localtime:ro \
+                -v /var/log:/var/log \
+                --restart=always \
+                -d \
+                api'''
       }
     }
 
