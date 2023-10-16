@@ -1,14 +1,14 @@
 pipeline {
   agent {
     node {
-      label 'pre-prod-node'
+      label """${env.BRANCH_NAME}"""
     }
   }
   
   environment {
         TOKEN = credentials('jenkins-reporter-telegram-token')
         CHAT_ID = credentials('m.hurin-telegram.chatId')
-        ENV_FILE = credentials('pre-prod-env-file')
+        ENV_FILE = credentials("""${env.BRANCH_NAME}-env-file""")
   }
     
   stages {
@@ -20,7 +20,7 @@ pipeline {
 
     stage('Checkout Code') {
       steps {
-        git(url: 'https://github.com/Kutuz0v/duty-helper/', branch: 'testing', credentialsId: 'GitHub (Kutuz0v)')
+        git(url: 'https://github.com/Kutuz0v/duty-helper/', branch: """${env.BRANCH_NAME}""", credentialsId: 'GitHub (Kutuz0v)')
       }
     }
 
@@ -55,7 +55,9 @@ pipeline {
         always {
             script {
                 GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
-                env.MESSAGE = """Building of ${currentBuild.fullDisplayName} ended on node ${NODE_NAME} with result: \n${currentBuild.result} in ${currentBuild.duration.intdiv(1000)} sec.\nCommit message: $GIT_COMMIT_MSG"""
+                env.MESSAGE = """Building of ${currentBuild.fullDisplayName} ended on node ${NODE_NAME} with result: \n""" + 
+                """${currentBuild.result} in ${currentBuild.duration.intdiv(1000)} sec.\n""" +
+                """Commit message: $GIT_COMMIT_MSG\n"""
             }
             sh '''curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage -d chat_id=$CHAT_ID -d text="$MESSAGE" > /dev/null'''
         }
