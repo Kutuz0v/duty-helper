@@ -46,7 +46,10 @@ public class AkamaiService {
     private Integer LIMIT_MAX_IMPACT_TO_NOTIFY;
 
 
-    @Scheduled(fixedRate = 60_000)
+    /**
+     * Temporary disabled (Akamai service is not available)
+     */
+    //@Scheduled(fixedRate = 60_000)
     public void monitorAkamai() {
         LocalDateTime from = LocalDateTime.now().minusMinutes(2);
         LocalDateTime to = LocalDateTime.now().minusMinutes(1);
