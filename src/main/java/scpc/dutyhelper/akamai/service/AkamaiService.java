@@ -72,7 +72,7 @@ public class AkamaiService {
                 .size(response.getBytes().length)
                 .build());
 
-        if (akamaiStatistic.getHitSec() > 1) {
+        if (akamaiStatistic.getHitSec() > LIMIT_MAX_IMPACT_TO_NOTIFY) {
             StringBuilder message = new StringBuilder("‼️Akamai фіксує атаку " + hitSec + " зап/сек");
             if (hitSec > 6_500)
                 message.append(" або більше!");
