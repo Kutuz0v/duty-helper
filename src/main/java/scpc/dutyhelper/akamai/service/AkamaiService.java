@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-//@Service
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class AkamaiService {
