@@ -51,9 +51,9 @@ public class ArborService {
                     .filter(alert -> alert.getDirection().equals("Incoming"))
                     .map(ArborAlert::toDosRecord)
                     .peek(record -> {
-                        record.setStartTime(record.getStartTime().plusHours(2));
+                        record.setStartTime(record.getStartTime().plusHours(3));
                         if (record.getStopTime() != null) {
-                            record.setStopTime(record.getStopTime().plusHours(2));
+                            record.setStopTime(record.getStopTime().plusHours(3));
                         }
                     })
                     .sorted(Comparator.comparingLong(DosRecord::getArborAlertId))
