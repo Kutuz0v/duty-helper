@@ -3,6 +3,7 @@ package scpc.dutyhelper.sitemonitoring.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +15,7 @@ import scpc.dutyhelper.sitemonitoring.model.Monitor;
 import scpc.dutyhelper.sitemonitoring.model.State;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -49,10 +51,15 @@ public class Robot {
         }
         // відповідь є але з проблемами
         catch (HttpClientErrorException e) {
-            if (e.getRawStatusCode() == 403
-                    && Objects.requireNonNull(Objects.requireNonNull(e.getResponseHeaders()).get("Server"))
-                    .get(0).equalsIgnoreCase("cloudflare")
-            ) {
+            String responseServerHeader = "";
+            HttpHeaders responseHeaders = e.getResponseHeaders();
+            if (responseHeaders != null) {
+                List<String> serverHeadersList = responseHeaders.get("Server");
+                if (serverHeadersList != null && !serverHeadersList.isEmpty()) {
+                    responseServerHeader = serverHeadersList.get(0);
+                }
+            }
+            if (e.getRawStatusCode() == 403 && "cloudflare".equalsIgnoreCase(responseServerHeader)) {
                 monitor.setState(State.UP);
             } else {
                 monitor.setState(State.DOWN);
